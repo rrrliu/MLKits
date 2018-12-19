@@ -14,16 +14,18 @@ function distance(pointA, pointB) {
 
 function runAnalysis() {
   const testSetSize = 100;
-  const [testSet, trainingSet] = splitDataset(outputs, testSetSize);
+  const k = 10;
   
-  _.range(1, 20).forEach(k => {
+  _.range(3).forEach(feature => {
+    const data = _.map(outputs, row => [row[feature], _.last(row)]);
+    const [testSet, trainingSet] = splitDataset(minMax(data, 1), testSetSize);
     const accuracy = _.chain(testSet)
-      .filter(testPoint => knn(trainingSet, _.initial(testPoint), k) === testPoint[3])
+      .filter(testPoint => knn(trainingSet, _.initial(testPoint), k) === _.last(testPoint))
       .size()
       .divide(testSetSize)
       .value();
 
-      console.log('K:', k, 'Accuracy:', accuracy);
+      console.log('Feature:', feature, 'Accuracy:', accuracy);
   });
 }
 
